@@ -2,7 +2,7 @@ import boto3
 import time
 
 defaultLogGroup = 'MyCustomLogs/Logs'
-defaultLogStream = 'Notebook-logging-'
+defaultLogStream = 'LogStream'
 region = 'us-east-1'
 
 
@@ -22,21 +22,24 @@ class CWLog:
         if logGroup is None:
             logGroup = defaultLogGroup
 
-            # Check if the logGroup exists
-            logGroups = self.cwl.describe_log_groups(logGroupNamePrefix=logGroup)
+        # Check if the logGroup exists
+        logGroups = self.cwl.describe_log_groups(logGroupNamePrefix=logGroup)
 
         if not logGroups['logGroups']:
             # No logGroups match, need to create it
             self.cwl.create_log_group(logGroupName=logGroup)
 
-            self.logGroup = logGroup
-            # Set a stream name if none given.
+        # Set the logGroup
+        self.logGroup = logGroup
+        # Set a stream name if none given.
         if logStreamName is None:
-            logStreamName = defaultLogStream + '_' + str(int(time.time() * 1000))
+            logStreamName = defaultLogStream
 
-            self.logStreamName = logStreamName + '_' + str(int(time.time() * 1000))
-            # Create the log stream for all logs in this log instance
-            self.cwl.create_log_stream(logGroupName=logGroup, logStreamName=logStreamName)
+        # Set the logStreamName
+        self.logStreamName = logStreamName + '_' + str(int(time.time() * 1000))
+
+        # Create the log stream for all logs in this log instance
+        self.cwl.create_log_stream(logGroupName=self.logGroup, logStreamName=self.logStreamName)
 
         # Start of log
         rsp = self.cwl.put_log_events(
