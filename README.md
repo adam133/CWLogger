@@ -24,9 +24,15 @@ A specific log stream prefix can be specified:
 ```
 log = mylogger.CWLog(logStreamName='MyStreamPrefix')
 ```
+Creating a log in a different AWS region can be done:
+
+```
+log = mylogger.CWLog(region='ap-east-1')
+```
 
 The default values:
 ```
 defaultLogGroup = 'MyCustomLogs/Logs'
 defaultLogStream = 'LogStream'
+region = 'us-east-1'
 ```
